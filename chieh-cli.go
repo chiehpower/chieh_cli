@@ -20,7 +20,7 @@ func main() {
 			Name:     "list",
 			Aliases:  []string{"ls"},
 			Usage:    "List the files in the present directory.",
-			Category: "List",
+			Category: "list",
 			Action: func(c *cli.Context) error {
 
 				// command_list
@@ -49,6 +49,7 @@ func main() {
 				{
 					Name:  "all",
 					Usage: "Directly install all packages from my personal list.",
+					Category: "install",
 					Action: func(c *cli.Context) error {
 						// sudo apt-get update
 						cmd := exec.Command("sudo", "apt-get", "update")
@@ -177,6 +178,7 @@ func main() {
 				{
 				    Name:  "remove",
 				    Usage: "remove an existing",
+					Category: "install",
 					Flags: []cli.Flag{
 						&cli.BoolFlag{Name: "serve"},
 						&cli.BoolFlag{Name: "option"},
@@ -237,7 +239,8 @@ func main() {
 
 	err := app.Run(os.Args)
 	if err != nil {
-		fmt.Println("Please check --help")
-		log.Fatal(err)
+		fmt.Println("Please check --help to get more usage information.")
+		os.Exit(0)
+		// log.Fatal(err)
 	}
 }
