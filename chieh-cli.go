@@ -6,7 +6,6 @@ import (
 	"log"
 	"os"
 	"os/exec"
-
 	"github.com/urfave/cli"
 )
 
@@ -17,30 +16,30 @@ func main() {
 
 	app := cli.NewApp()
 	app.Commands = []cli.Command{
-		// {
-		// 	Name:     "list",
-		// 	Aliases:  []string{"ls"},
-		// 	Usage:    "List the files in the present directory.",
-		// 	Category: "List",
-		// 	Action: func(c *cli.Context) error {
+		{
+			Name:     "list",
+			Aliases:  []string{"ls"},
+			Usage:    "List the files in the present directory.",
+			Category: "List",
+			Action: func(c *cli.Context) error {
 
-		// 		// command_list
-		// 		args := []string{
-		// 			"ls -lah",
-		// 			"df -h"}
+				// command_list
+				args := []string{
+					"ls -lah",
+					"df -h"}
 
-		// 		for i := 0; i < 2; i++ {
-		// 			cmd := exec.Command("bash", "-c", args[i])
-		// 			// cmd := exec.Command("ls", "-lah")
-		// 			out, err := cmd.CombinedOutput()
-		// 			if err != nil {
-		// 				log.Fatalf("cmd.Run() failed with %s\n", err)
-		// 			}
-		// 			fmt.Printf(string(out))
-		// 		}
-		// 		return nil
-		// 	},
-		// },
+				for i := 0; i < 2; i++ {
+					cmd := exec.Command("bash", "-c", args[i])
+					// cmd := exec.Command("ls", "-lah")
+					out, err := cmd.CombinedOutput()
+					if err != nil {
+						log.Fatalf("cmd.Run() failed with %s\n", err)
+					}
+					fmt.Printf(string(out))
+				}
+				return nil
+			},
+		},
 		{
 			Name:     "install",
 			Aliases:  []string{"i", "I", "Install"},
@@ -191,6 +190,42 @@ func main() {
 				        return nil
 				    },
 				},
+			},
+		},
+				{
+			Name:     "pull",
+			Aliases:  []string{"p", "Pull"},
+			Usage:    "Pull the docker image. Notice: please install Docker first.",
+			Category: "pull",
+			Flags: []cli.Flag{
+			&cli.StringFlag{
+				Name: "u",
+				Usage: "Provide your Docker username for login use.",
+				Required: true, 
+				},
+			},
+			Action: func(c *cli.Context) error {
+				if len(c.String("u")) == 0 {
+					fmt.Println("Please add an option '-u' for providing your username.")
+					os.Exit(0)
+				}
+
+				_, err := exec.LookPath("docker")
+				if err != nil {	
+					fmt.Println("Please install Docker first. Or check your Docker environment path.")
+					os.Exit(0)
+				}
+
+				var pwd string 
+				
+				fmt.Printf("Your user name is %s\n", c.String("u"))
+				fmt.Print("Please type the password: ")
+				fmt.Print("\033[8m") // Hide input
+				fmt.Scan(&pwd)
+				fmt.Print("\033[28m") // Show input
+				// fmt.Printf("Here is your password: %s\n", pwd)
+
+				return nil
 			},
 		},
 	}
