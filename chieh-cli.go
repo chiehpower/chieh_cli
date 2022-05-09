@@ -159,11 +159,15 @@ func main() {
 							fmt.Println("Checking GPU status ...")
 							_, err = exec.LookPath("nvidia-smi")
 							if err != nil {
-								fmt.Println("\n>> Start to install the GPU driver Version 470.")
+								fmt.Println("\n>> Start to install the GPU driver Version 470 and nvidia-container-toolkit.")
 								gpu_driver_list := []string{
 									"sudo sed -i -e 's/tw.archive.ubuntu.com/free.nchc.org.tw/' /etc/apt/sources.list",
 									"sudo apt update",
 									"sudo apt install -y nvidia-driver-470-server",
+									"curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | sudo apt-key add -",
+								 	"distribution=$(. /etc/os-release;echo $ID$VERSION_ID)",
+									"curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | sudo tee /etc/apt/sources.list.d/nvidia-docker.list",
+								  	"sudo apt-get update && sudo apt-get install -y nvidia-container-toolkit",
 									}
 								
 								for i:=0; i<len(gpu_driver_list); i++{
