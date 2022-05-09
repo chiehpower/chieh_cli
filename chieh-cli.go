@@ -50,6 +50,12 @@ func main() {
 					Name:  "all",
 					Usage: "Directly install all packages from my personal list.",
 					Category: "install",
+					Flags: []cli.Flag{
+						&cli.BoolFlag{
+							Name: "no-gpu",
+							Usage: "Without installing the GPU driver.", 
+							},
+						},
 					Action: func(c *cli.Context) error {
 						// sudo apt-get update
 						cmd := exec.Command("sudo", "apt-get", "update")
@@ -145,31 +151,34 @@ func main() {
 						} else {
 							fmt.Println("Already installed Docker-Compose.")
 						}
+						
+						if  c.Bool("no-gpu") != true {
+							fmt.Println("Start to install GPU driver...")
+							// Start install nvidia-driver
+							fmt.Println("------------------------------------------")
+							fmt.Println("Checking GPU status ...")
+							_, err = exec.LookPath("nvidia-smi")
+							if err != nil {
+								fmt.Println("\n>> Start to install the GPU driver Version 470.")
+								gpu_driver_list := []string{
+									"sudo sed -i -e 's/tw.archive.ubuntu.com/free.nchc.org.tw/' /etc/apt/sources.list",
+									"sudo apt update",
+									"sudo apt install -y nvidia-driver-470-server",
+									}
+								
+								for i:=0; i<len(gpu_driver_list); i++{
+									cmd = exec.Command("bash", "-c", gpu_driver_list[i])
+									out, err = cmd.CombinedOutput()
+									if err != nil {
+										log.Fatalf("cmd.Run() failed with %s\n", err)
+									}
+									fmt.Printf(string(out))
+								}
 
-						// Start install nvidia-driver
-						fmt.Println("------------------------------------------")
-						fmt.Println("Checking GPU status ...")
-						_, err = exec.LookPath("nvidia-smi")
-						if err != nil {
-							fmt.Println("\n>> Start to install the GPU driver Version 470.")
-							gpu_driver_list := []string{
-								"sudo sed -i -e 's/tw.archive.ubuntu.com/free.nchc.org.tw/' /etc/apt/sources.list",
-								"sudo apt update",
-								"sudo apt install -y nvidia-driver-470-server",
-								}
-							
-							for i:=0; i<len(gpu_driver_list); i++{
-								cmd = exec.Command("bash", "-c", gpu_driver_list[i])
-								out, err = cmd.CombinedOutput()
-								if err != nil {
-									log.Fatalf("cmd.Run() failed with %s\n", err)
-								}
-								fmt.Printf(string(out))
+								fmt.Println("\nDone for the installation of GPU driver.\n")
+							} else{
+								fmt.Println("Already installed nvidia-smi.")
 							}
-
-							fmt.Println("\nDone for the installation of GPU driver.\n")
-						} else{
-							fmt.Println("Already installed nvidia-smi.")
 						}
 
 						return nil

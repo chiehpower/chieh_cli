@@ -46,6 +46,12 @@ Basically we will use the subcommand, **install** and **pull**.
 
 It will install git, docker, docker-compose, and nvidia gpu driver, etc.
 
+If you do not want to install the GPU driver, then you can add the option `--no-gpu`.
+
+```
+./chieh-cli install all --no-gpu 
+```
+
 ## ▎Dev log
 
 - [x] 2022/05/09 - Add the docker pull images with the specific uersname and password.
