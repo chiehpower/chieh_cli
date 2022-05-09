@@ -226,6 +226,19 @@ func main() {
 				fmt.Scan(&pwd)
 				fmt.Print("\033[28m") // Show input
 				// fmt.Printf("Here is your password: %s\n", pwd)
+				
+				// Check the docker login
+				docker_login := "docker login -u " + c.String("u") + " -p " + pwd
+				fmt.Println(docker_login)
+				cmd := exec.Command("bash", "-c", docker_login)
+				out, err := cmd.CombinedOutput()
+				if err != nil {
+					fmt.Println("Login failure. Please check the uersname and password.")
+					os.Exit(0)
+					// log.Fatalf("cmd.Run() failed with %s\n", err)
+				}
+				fmt.Printf(">> %s\n", string(out))
+				
 
 				return nil
 			},
