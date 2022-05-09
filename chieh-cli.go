@@ -11,9 +11,6 @@ import (
 
 func main() {
 
-	// var command_list := make([]string, 10, 20)
-	type command_list struct{}
-
 	app := cli.NewApp()
 	app.Commands = []cli.Command{
 		{
