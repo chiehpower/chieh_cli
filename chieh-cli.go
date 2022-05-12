@@ -129,7 +129,7 @@ func main() {
 						// 
 						fmt.Println("------------------------------------------")
 						fmt.Println("Checking Docker-Compose tool...")
-						_, err = exec.LookPath("docker")
+						_, err = exec.LookPath("docker-compose")
 						if err != nil {
 							fmt.Println("Start to install Docker Compose tool.\n")
 							docker_compose_list := []string{
