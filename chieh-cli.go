@@ -159,6 +159,7 @@ func main() {
 								fmt.Println("\n>> Start to install the GPU driver Version 470 and nvidia-container-toolkit.")
 								gpu_driver_list := []string{
 									"sudo sed -i -e 's/tw.archive.ubuntu.com/free.nchc.org.tw/' /etc/apt/sources.list",
+									"sudo add-apt-repository -y ppa:graphics-drivers/ppa",
 									"sudo apt update",
 									"sudo apt install -y nvidia-driver-470-server",
 									"curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | sudo apt-key add -",
@@ -248,7 +249,20 @@ func main() {
 					// log.Fatalf("cmd.Run() failed with %s\n", err)
 				}
 				fmt.Printf(">> %s\n", string(out))
-				
+
+				// Pull the docker image
+				image_list := []string{
+					"nvcr.io/nvidia/tritonserver:21.03-py3",
+					"minio/minio:RELEASE.2022-03-24T00-43-44Z",
+					"postgres",
+					}
+				ch := make(chan string)
+				for image:=0; image<len(image_list); image++{
+					go DockerPull(image_list[image], ch)
+					<-ch
+				}
+
+				fmt.Printf("\nDone for the pulling of whole docker images.\n")
 
 				return nil
 			},
@@ -266,4 +280,19 @@ func main() {
 		os.Exit(0)
 		// log.Fatal(err)
 	}
+}
+
+func DockerPull(s string, c chan string) {
+
+	docker_pull_image := "docker pull " + s
+	fmt.Println(docker_pull_image)
+	cmd := exec.Command("bash", "-c", docker_pull_image)
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		fmt.Println("Pull failure. ", s, " Please check the image.\n")
+		c <- "FINISH"
+	}
+	fmt.Printf(">> Done for pulling the %s image.\n", string(out))
+
+    c <- "FINISH"
 }
