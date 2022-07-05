@@ -239,7 +239,7 @@ func main() {
 				// fmt.Printf("Here is your password: %s\n", pwd)
 				
 				// Check the docker login
-				docker_login := "docker login -u " + c.String("u") + " --password-stdin " + pwd
+				docker_login := "docker login -u " + c.String("u") + " -p " + pwd
 				fmt.Println(docker_login)
 				cmd := exec.Command("bash", "-c", docker_login)
 				out, err := cmd.CombinedOutput()
